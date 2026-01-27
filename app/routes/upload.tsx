@@ -67,14 +67,28 @@ const Upload = () => {
     console.log(data);
     navigate(`/resume/${uuid}`);
   };
+  const [formError, setFormError] = useState("");
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setFormError("");
     const form = e.currentTarget.closest("form");
     if (!form) return;
     const formData = new FormData(form);
     const companyName = formData.get("company-name") as string;
+    if (!companyName) {
+      setFormError("Company name is required.");
+      return;
+    }
     const jobTitle = formData.get("job-title") as string;
+    if (!jobTitle) {
+      setFormError("Job title is required.");
+      return;
+    }
     const jobDescription = formData.get("job-description") as string;
+    if (!jobDescription) {
+      setFormError("Job Description is required.");
+      return;
+    }
     if (!file) return;
     handleAnalyze({ companyName, jobTitle, jobDescription, file });
   };
@@ -93,46 +107,60 @@ const Upload = () => {
             <h2>Drop your Resume for ATS Scores and Improvement tips</h2>
           )}
           {!isProcessing && (
-            <form
-              id="upload-form"
-              onSubmit={handleSubmit}
-              className="flex flex-col gap-4 mt-8"
-            >
-              <div className="form-div">
-                <label htmlFor="company-name">Company Name</label>
-                <input
-                  type="text"
-                  name="company-name"
-                  placeholder="Company Name"
-                  id="company-name"
-                />
-              </div>
-              <div className="form-div">
-                <label htmlFor="job-title">Job Title</label>
-                <input
-                  type="text"
-                  name="job-title"
-                  placeholder="Job Title"
-                  id="job-title"
-                />
-              </div>
-              <div className="form-div">
-                <label htmlFor="job-description">Job Decription</label>
-                <textarea
-                  rows={5}
-                  name="job-description"
-                  placeholder="Job Description"
-                  id="job-description"
-                />
-              </div>
-              <div className="form-div">
-                <label htmlFor="uploader">Upload Resume</label>
-                <FileUploader onFileSelect={handleFileSelect} />
-              </div>
-              <button className="primary-button" type="submit">
-                Analyze Resume
-              </button>
-            </form>
+            <>
+              {formError && (
+                <p className="text-red-500 font-medium mt-4">{formError}</p>
+              )}
+
+              <form
+                id="upload-form"
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-4 mt-8"
+              >
+                <div className="form-div">
+                  <label htmlFor="company-name">Company Name</label>
+                  <input
+                    type="text"
+                    name="company-name"
+                    placeholder="Company Name"
+                    id="company-name"
+                  />
+                </div>
+
+                <div className="form-div">
+                  <label htmlFor="job-title">Job Title</label>
+                  <input
+                    type="text"
+                    name="job-title"
+                    placeholder="Job Title"
+                    id="job-title"
+                  />
+                </div>
+
+                <div className="form-div">
+                  <label htmlFor="job-description">Job Description</label>
+                  <textarea
+                    rows={5}
+                    name="job-description"
+                    placeholder="Job Description"
+                    id="job-description"
+                  />
+                </div>
+
+                <div className="form-div">
+                  <label htmlFor="uploader">Upload Resume</label>
+                  <FileUploader onFileSelect={handleFileSelect} />
+                </div>
+
+                <button
+                  className="primary-button"
+                  type="submit"
+                  disabled={isProcessing}
+                >
+                  Analyze Resume
+                </button>
+              </form>
+            </>
           )}
         </div>
       </section>
