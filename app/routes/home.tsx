@@ -23,12 +23,9 @@ export default function Home() {
   }, [auth.isAuthenticated]);
 
   useEffect(() => {
-  if (!auth.isAuthenticated) return;
+    const loadResumes = async () => {
+      setLoadingResumes(true);
 
-  const loadResumes = async () => {
-    setLoadingResumes(true);
-
-    try {
       const resumes = (await kv.list("resume:*", true)) as KVItem[];
 
       const parsedResumes = resumes?.map(
@@ -36,15 +33,11 @@ export default function Home() {
       );
 
       setResumes(parsedResumes || []);
-    } catch (error) {
-      console.error("Failed to load resumes", error);
-    } finally {
       setLoadingResumes(false);
-    }
-  };
+    };
 
-  loadResumes();
-}, [auth.isAuthenticated]);
+    loadResumes();
+  }, []);
 
   return (
     <main className="bg-[url('/images/bg-main.svg')] bg-cover">
